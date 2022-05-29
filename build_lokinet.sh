@@ -2,8 +2,8 @@
 
 echo "installing required packages"
 
-sudo apt-get update
-sudo apt-get install -y build-essential cmake git libcap-dev pkg-config automake libtool libuv1-dev libsodium-dev libzmq3-dev libcurl4-openssl-dev libevent-dev nettle-dev libunbound-dev libsqlite3-dev libssl-dev nlohmann-json3-dev libjemalloc-dev libjemalloc2 doxygen aria2
+echo "sudo apt-get update"
+echo "sudo apt-get install -y build-essential cmake git libcap-dev pkg-config automake libtool libuv1-dev libsodium-dev libzmq3-dev libcurl4-openssl-dev libevent-dev nettle-dev libunbound-dev libsqlite3-dev libssl-dev nlohmann-json3-dev libjemalloc-dev libjemalloc2 doxygen aria2"
 
 cd ~/
 mkdir lokinet_build
