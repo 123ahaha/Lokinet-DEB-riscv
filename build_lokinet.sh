@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "installing required packages"
+echo "install required packages"
 
 echo "sudo apt-get update"
 echo "sudo apt-get install -y build-essential cmake git libcap-dev pkg-config automake libtool libuv1-dev libsodium-dev libzmq3-dev libcurl4-openssl-dev libevent-dev nettle-dev libunbound-dev libsqlite3-dev libssl-dev nlohmann-json3-dev libjemalloc-dev libjemalloc2 doxygen aria2"
@@ -11,47 +11,50 @@ cd  lokinet_build
 mkdir lokinet_main bin_lokinet oxen-mq
 
 echo "------------Building oxen-mq for liboxenmq-----------"
-cd oxen-mq
-aria2c https://github.com/123ahaha/Lokinet-DEB-riscv/raw/main/liboxenmq1.2.11_1.2.11-2%7Edeb11_amd64.deb #you can just import your DEB #CHANGE_VERSION
-dpkg-deb -x liboxenmq1.2.11_1.2.11-2~deb11_amd64.deb liboxenmq1.2.11_1.2.11-2~deb11_riscv64 #change the version each time i guess CHANGE_VERSION
-dpkg-deb --control liboxenmq1.2.11_1.2.11-2~deb11_amd64.deb
-mv DEBIAN liboxenmq1.2.11_1.2.11-2~deb11_riscv64/
-cp ~/lokinet_build/oxen-mq/oxen-mq/build/liboxenmq.so.0 ~/lokinet_build/oxen-mq/liboxenmq1.2.11_1.2.11-2~deb11_riscv64/usr/lib/x86_64-linux-gnu/liboxenmq.so.1.2.11 #will have to change version each time CHANGE_VERSION
-echo "!! YOU HAVE TO REPALCE THE CHECKSUM OF ~/lokinet_build/oxen-mq/liboxenmqX.X.XX_X.X.XX-X~deb11_riscv64/usr/lib/x86_64-linux-gnu/liboxenmq.so.X.X.XX in the BY THIS !!"
-md5sum ~/lokinet_build/oxen-mq/liboxenmq1.2.11_1.2.11-2~deb11_riscv64/usr/lib/x86_64-linux-gnu/liboxenmq.so.1.2.11 #CHANGE_VERSION
-echo "!! IN THE ~/lokinet_build/oxen-mq/liboxenmqX.X.XX_X.X.XX-2~deb11_riscv64/DEBIAN/md5sums FILE !!"
-echo "!! I LL REPASTE IT AT THE END !!"
+cd ~/lokinet_build/oxen-mq
+aria2c https://github.com/123ahaha/Lokinet-DEB-riscv/raw/main/liboxenmq1.2.12_1.2.12-1%7Edeb11_amd64.deb #you can just import your DEB #CHANGE_VERSION
+
+dpkg-deb -x ~/lokinet_build/oxen-mq/liboxenmq1.2.12_1.2.12-1~deb11_amd64.deb ~/lokinet_build/oxen-mq/liboxenmq1.2.11_1.2.11-2~deb11_riscv64 #change the version each time i guess CHANGE_VERSION
+dpkg-deb --control ~/lokinet_build/oxen-mq/liboxenmq1.2.12_1.2.12-1~deb11_amd64.deb
 
 git clone --recursive https://github.com/oxen-io/oxen-mq.git
 cd oxen-mq && mkdir build && cd build
 cmake .. -DCMAKE_INSTALL_PREFIX:PATH=/usr -DOXENMQ_INSTALL_CPPZMQ=ON -DOXENMQ_BUILD_TESTS=OFF
 make CPUS=$(nproc)
 
+mv ~/lokinet_build/oxen-mq/DEBIAN ~/lokinet_build/oxen-mq/liboxenmq1.2.11_1.2.11-2~deb11_riscv64/
+cp ~/lokinet_build/oxen-mq/oxen-mq/build/liboxenmq.so.0 ~/lokinet_build/oxen-mq/liboxenmq1.2.11_1.2.11-2~deb11_riscv64/usr/lib/x86_64-linux-gnu/liboxenmq.so.1.2.11 #will have to change version each time CHANGE_VERSION
+echo "!! YOU HAVE TO REPALCE THE CHECKSUM OF ~/lokinet_build/oxen-mq/liboxenmqX.X.XX_X.X.XX-X~deb11_riscv64/usr/lib/x86_64-linux-gnu/liboxenmq.so.X.X.XX in the BY THIS !!"
+md5sum ~/lokinet_build/oxen-mq/liboxenmq1.2.11_1.2.11-2~deb11_riscv64/usr/lib/x86_64-linux-gnu/liboxenmq.so.1.2.11 #CHANGE_VERSION
+echo "!! IN THE ~/lokinet_build/oxen-mq/liboxenmqX.X.XX_X.X.XX-2~deb11_riscv64/DEBIAN/md5sums FILE !!"
+echo "!! I LL REPASTE IT AT THE END !!"
+
+
 echo "------------Building lokinet | lokinet-vpn | lokinet-bootstrap for lokinet package-----------"
-cd lokinet_main
-aria2c https://github.com/123ahaha/Lokinet-DEB-riscv/raw/main/lokinet_0.9.8-2%7Edeb11_all.deb #you can just import your DEB #CHANGE_VERSION
-dpkg-deb -x lokinet_0.9.8-2~deb11_all.deb lokinet_0.9.8-2~deb11_riscv64 #CHANGE_VERSION
-dpkg-deb --control lokinet_0.9.8-2~deb11_all.deb
-mv DEBIAN lokinet_0.9.8-2~deb11_riscv64/
+cd ~/lokinet_build/lokinet_main
+aria2c https://github.com/123ahaha/Lokinet-DEB-riscv/raw/main/lokinet_0.9.9-2%7Edeb11_all.deb #you can just import your DEB #CHANGE_VERSION
+dpkg-deb -x ~/lokinet_build/lokinet_main/lokinet_0.9.9-2~deb11_all.deb ~/lokinet_build/lokinet_main/lokinet_0.9.9-2~deb11_riscv64 #CHANGE_VERSION
+dpkg-deb --control ~/lokinet_build/lokinet_main/lokinet_0.9.9-2~deb11_all.deb
+mv ~/lokinet_build/lokinet_main/DEBIAN ~/lokinet_build/lokinet_main/lokinet_0.9.9-2~deb11_riscv64/
 
 git clone --recursive https://github.com/oxen-io/lokinet
-cd lokinet && mkdir build && cd build
+cd ~/lokinet_build/lokinet_main/lokinet && mkdir build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release \
-	 -DCMAKE_C_FLAGS="-march=rv64imafdc -mabi=lp64d" \
-	 -DCMAKE_CXX_FLAGS="-march=rv64imafdc -mabi=lp64d" \
-	 -DNATIVE_BUILD=OFF \
-	 -DUSE_AVX2=OFF \
-	 -DWITH_TESTS=OFF \
-	 -DWITH_SYSTEMD=ON \
-	 -DBUILD_SHARED_LIBS=OFF
+         -DCMAKE_C_FLAGS="-march=rv64imafdc -mabi=lp64d" \
+         -DCMAKE_CXX_FLAGS="-march=rv64imafdc -mabi=lp64d" \
+         -DNATIVE_BUILD=OFF \
+         -DUSE_AVX2=OFF \
+         -DWITH_TESTS=OFF \
+         -DWITH_SYSTEMD=ON \
+         -DBUILD_SHARED_LIBS=OFF
 
 make CPUS=$(nproc)
 
 
-cp ~/lokinet_build/lokinet_main/lokinet/contrib/lokinet-resolvconf ~/lokinet_build/lokinet_main/lokinet_0.9.8-2~deb11_riscv64/usr/sbin/ #CHANGE_VERSION
+cp ~/lokinet_build/lokinet_main/lokinet/contrib/lokinet-resolvconf ~/lokinet_build/lokinet_main/lokinet_0.9.9-2~deb11_riscv64/usr/sbin/ #CHANGE_VERSION
 
 echo "!! YOU HAVE TO REPALCE THE CHECKSUM OF ~/lokinet_build/lokinet_main/lokinet_X.X.X-X~deb11_riscv64/usr/sbin/lokinet-resolvconf BY THIS : !!"
-md5sum ~/lokinet_build/lokinet_main/lokinet_0.9.8-2~deb11_riscv64/usr/sbin/lokinet-resolvconf #CHANGE_VERSION
+md5sum ~/lokinet_build/lokinet_main/lokinet_0.9.9-2~deb11_riscv64/usr/sbin/lokinet-resolvconf #CHANGE_VERSION
 echo "!! IN THE ~/lokinet_build/lokinet_main/lokinet_X.X.X-X~deb11_riscv64/DEBIAN/md5sums FILE !!"
 echo "!! I LL REPASTE IT AT THE END !!"
 
@@ -60,19 +63,19 @@ echo "!! I LL REPASTE IT AT THE END !!"
 echo "------------Building lokinet-bin -----------"
 
 cd ~/lokinet_build/bin_lokinet
-aria2c https://github.com/123ahaha/Lokinet-DEB-riscv/raw/main/lokinet-bin_0.9.8-2%7Edeb11_amd64.deb #you can just import your DEB #CHANGE_VERSION
-dpkg-deb -x lokinet-bin_0.9.8-2~deb11_amd64.deb lokinet-bin_0.9.8-2~deb11_riscv64 #CHANGE_VERSION
-dpkg-deb --control lokinet-bin_0.9.8-2~deb11_amd64.deb #CHANGE_VERSION
-mv DEBIAN ~/lokinet_build/bin_lokinet/lokinet-bin_0.9.8-2~deb11_riscv64 #CHANGE_VERSION
+aria2c https://github.com/123ahaha/Lokinet-DEB-riscv/raw/main/lokinet-bin_0.9.9-2%7Edeb11_amd64.deb #you can just import your DEB #CHANGE_VERSION
+dpkg-deb -x ~/lokinet_build/bin_lokinet/lokinet-bin_0.9.9-2~deb11_amd64.deb ~/lokinet_build/bin_lokinet/lokinet-bin_0.9.9-2~deb11_riscv64 #CHANGE_VERSION
+dpkg-deb --control ~/lokinet_build/bin_lokinet/lokinet-bin_0.9.9-2~deb11_amd64.deb #CHANGE_VERSION
+mv DEBIAN ~/lokinet_build/bin_lokinet/lokinet-bin_0.9.9-2~deb11_riscv64 #CHANGE_VERSION
 
-cp ~/lokinet_build/lokinet/build/daemon/lokinet ~/lokinet_build/bin_lokinet/lokinet-bin_0.9.8-2~deb11_riscv64/usr/bin/ #CHANGE_VERSION
-cp ~/lokinet_build/lokinet/build/daemon/lokinet-bootstrap ~/lokinet_build/bin_lokinet/lokinet-bin_0.9.8-2~deb11_riscv64/usr/bin/ #CHANGE_VERSION
-cp ~/lokinet_build/lokinet/build/daemon/lokinet-vpn ~/lokinet_build/bin_lokinet/lokinet-bin_0.9.8-2~deb11_riscv64/usr/bin/ #CHANGE_VERSION
+cp ~/lokinet_build/lokinet_main/lokinet/build/daemon/lokinet ~/lokinet_build/bin_lokinet/lokinet-bin_0.9.9-2~deb11_riscv64/usr/bin/ #CHANGE_VERSION
+cp ~/lokinet_build/lokinet_main/lokinet/build/daemon/lokinet-bootstrap ~/lokinet_build/bin_lokinet/lokinet-bin_0.9.9-2~deb11_riscv64/usr/bin/ #CHANGE_VERSION
+cp ~/lokinet_build/lokinet_main/lokinet/build/daemon/lokinet-vpn ~/lokinet_build/bin_lokinet/lokinet-bin_0.9.9-2~deb11_riscv64/usr/bin/ #CHANGE_VERSION
 
 echo "!! YOU HAVE TO REPALCE THE CHECKSUM OF ~/lokinet_build/bin_lokinet/lokinet-bin_X.X.X-X~deb11_riscv64/usr/bin/* BY THIS : !!"
-md5sum ~/lokinet_build/bin_lokinet/lokinet-bin_0.9.8-2~deb11_riscv64/usr/bin/lokinet #CHANGE_VERSION
-md5sum ~/lokinet_build/bin_lokinet/lokinet-bin_0.9.8-2~deb11_riscv64/usr/bin/lokinet-bootstrap #CHANGE_VERSION
-md5sum ~/lokinet_build/bin_lokinet/lokinet-bin_0.9.8-2~deb11_riscv64/usr/bin/lokinet-vpn #CHANGE_VERSION
+md5sum ~/lokinet_build/bin_lokinet/lokinet-bin_0.9.9-2~deb11_riscv64/usr/bin/lokinet #CHANGE_VERSION
+md5sum ~/lokinet_build/bin_lokinet/lokinet-bin_0.9.9-2~deb11_riscv64/usr/bin/lokinet-bootstrap #CHANGE_VERSION
+md5sum ~/lokinet_build/bin_lokinet/lokinet-bin_0.9.9-2~deb11_riscv64/usr/bin/lokinet-vpn #CHANGE_VERSION
 echo "!! IN THE ~/lokinet_build/bin_lokinet/lokinet-bin_X.X.X-X~deb11_riscv64/DEBIAN/md5sums FILE !!"
 echo "!! I LL REPASTE IT AT THE END !!"
 
@@ -156,26 +159,27 @@ EOF
 echo "NOW WE WILL UPDATE THE MD5SUM OF EACH ./DEBIAN/md5sums FILE"
 echo "and finally build the .deb packages"
 echo "!! YOU HAVE TO REPALCE THE CHECKSUM OF ~/lokinet_build/lokinet_main/lokinet_X.X.X-X~deb11_riscv64/usr/sbin/lokinet-resolvconf BY THIS : !!"
-md5sum ~/lokinet_build/lokinet_main/lokinet_0.9.8-2~deb11_riscv64/usr/sbin/lokinet-resolvconf #CHANGE_VERSION
+md5sum ~/lokinet_build/lokinet_main/lokinet_0.9.9-2~deb11_riscv64/usr/sbin/lokinet-resolvconf #CHANGE_VERSION
 echo "!! IN THE ~/lokinet_build/lokinet_main/lokinet_X.X.X-X~deb11_riscv64/DEBIAN/md5sums FILE !!"
 echo ""
 
-echo "!! YOU HAVE TO REPALCE THE CHECKSUM OF ~/lokinet_build/oxen-mq/liboxenmqX.X.XX_X.X.XX-X~deb11_riscv64/usr/lib/x86_64-linux-gnu/liboxenmq.so.X.X.XX in the BY THIS !!"
+echo "!! YOU HAVE TO REPALCE THE CHECKSUM OF ~/lokinet_build/oxen-mq/liboxenmqX.X.XX_X.X.XX-X~deb11_riscv64/usr/lib/x86_64-linux-gnu/liboxenmq.so.X.X.XX in tX in the BY THIS !!"
 md5sum ~/lokinet_build/oxen-mq/liboxenmq1.2.11_1.2.11-2~deb11_riscv64/usr/lib/x86_64-linux-gnu/liboxenmq.so.1.2.11 #CHANGE_VERSION
 echo "!! IN THE ~/lokinet_build/oxen-mq/liboxenmqX.X.XX_X.X.XX-2~deb11_riscv64/DEBIAN/md5sums FILE !!"
 echo ""
 
 echo "!! YOU HAVE TO REPALCE THE CHECKSUM OF ~/lokinet_build/bin_lokinet/lokinet-bin_X.X.X-X~deb11_riscv64/usr/bin/* BY THIS : !!"
-md5sum ~/lokinet_build/bin_lokinet/lokinet-bin_0.9.8-2~deb11_riscv64/usr/bin/lokinet #CHANGE_VERSION
-md5sum ~/lokinet_build/bin_lokinet/lokinet-bin_0.9.8-2~deb11_riscv64/usr/bin/lokinet-bootstrap #CHANGE_VERSION
-md5sum ~/lokinet_build/bin_lokinet/lokinet-bin_0.9.8-2~deb11_riscv64/usr/bin/lokinet-vpn #CHANGE_VERSION
+md5sum ~/lokinet_build/bin_lokinet/lokinet-bin_0.9.9-2~deb11_riscv64/usr/bin/lokinet #CHANGE_VERSION
+md5sum ~/lokinet_build/bin_lokinet/lokinet-bin_0.9.9-2~deb11_riscv64/usr/bin/lokinet-bootstrap #CHANGE_VERSION
+md5sum ~/lokinet_build/bin_lokinet/lokinet-bin_0.9.9-2~deb11_riscv64/usr/bin/lokinet-vpn #CHANGE_VERSION
 echo "!! IN THE ~/lokinet_build/bin_lokinet/lokinet-bin_X.X.X-X~deb11_riscv64/DEBIAN/md5sums FILE !!"
 echo ""
 
 echo "when you're done, just run thoses command to build the packages"
+
 cd
-echo "dpkg -b ~/lokinet_build/lokinet_main/lokinet_0.9.8-2~deb11_riscv64 lokinet_0.9.8-2~deb11_riscv64.deb"
+echo "dpkg -b ~/lokinet_build/lokinet_main/lokinet-bin_0.9.9-2~deb11_riscv64 lokinet_0.9.9-2~deb11_riscv64.deb"
 
-echo "dpkg -b ~/lokinet_build/lokinet_main/lokinet-bin_0.9.8-2~deb11_riscv64 lokinet-bin_0.9.8-2~deb11_riscv64.deb"
+echo "dpkg -b ~/lokinet_build/bin-lokinet/lokinet-bin_0.9.9-2~deb11_riscv64 lokinet-bin_0.9.9-2~deb11_riscv64.deb"
 
-echo "dpkg -b ~/lokinet_build/lokinet_main/liboxenmq1.2.11_1.2.11-2~deb11_riscv64 liboxenmq1.2.11_1.2.11-2~deb11_riscv64.deb"
+echo "dpkg -b ~/lokinet_build/oxen-mq/liboxenmq1.2.11_1.2.11-2~deb11_riscv64 liboxenmq1.2.11_1.2.11-2~deb11_riscv64.deb"
