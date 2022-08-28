@@ -11,7 +11,7 @@ mkdir lokinet_build
 cd  lokinet_build
 mkdir lokinet_main bin_lokinet oxen-mq 
 
-aria2c https://github.com/123ahaha/Lokinet-DEB-riscv/raw/main/liboxenc-dev_1.0.3-1%7Edeb11_all.deb
+aria2c https://github.com/123ahaha/Lokinet-DEB-riscv/raw/main/liboxenc-dev_1.0.4-1%7Edeb11_all.deb
 
 echo "------------Building oxen-mq for liboxenmq-----------"
 cd ~/lokinet_build/oxen-mq
